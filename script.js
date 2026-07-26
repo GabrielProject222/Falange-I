@@ -22,11 +22,17 @@ function renderCorredores() {
 
     for (let inicio = 1; inicio <= 60; inicio += 10) {
         const fim = Math.min(inicio + 9, 60);
-        html += `<div class="grupo">
-            <h3>Corredores ${inicio} a ${fim}</h3>
-            <div class="botoes-corredor">`;
+        html += '<div class="grupo"><h3>Corredores ' + inicio + ' a ' + fim + '</h3><div class="botoes-corredor">';
 
-        for (let i =
+        for (let i = inicio; i <= fim; i++) {
+            const temItens = dados[i] && dados[i].length > 0;
+            const classe = temItens ? 'has-items' : '';
+            html += '<a href="corredor.html?id=' + i + '" class="' + classe + '">' + i + '</a>';
+        }
+
+        html += '</div></div>';
+    }
+
     container.innerHTML = html;
 }
 
@@ -49,7 +55,7 @@ function setupSearch() {
         if (/^\d+$/.test(termo)) {
             const num = parseInt(termo, 10);
             if (num >= 1 && num <= 60) {
-                window.location.href = `corredor.html?id=${num}`;
+                window.location.href = 'corredor.html?id=' + num;
                 return;
             }
         }
@@ -58,7 +64,7 @@ function setupSearch() {
         const resultados = [];
 
         for (const corredor in dados) {
-            dados[corredor].forEach(item => {
+            dados[corredor].forEach(function(item) {
                 if (item.nome.toLowerCase().includes(termo)) {
                     resultados.push({
                         corredor: corredor,
@@ -70,19 +76,11 @@ function setupSearch() {
         }
 
         if (resultados.length === 0) {
-            resultsBox.innerHTML = `<h3>Nenhum resultado para "${input.value}"</h3>`;
+            resultsBox.innerHTML = '<h3>Nenhum resultado para "' + input.value + '"</h3>';
         } else {
-            let html = `<h3>Resultados para "\( {input.value}" ( \){resultados.length})</h3>`;
-            resultados.forEach(r => {
-                html += `
-                <div class="result-item">
-                    <div class="info">
-                        <div class="nome">${r.nome}</div>
-                        <div class="corredor-tag">Corredor ${r.corredor}</div>
-                        <div class="qtd">\( {r.quantidade} palete \){r.quantidade > 1 ? 's' : ''}</div>
-                    </div>
-                    <a href="corredor.html?id=${r.corredor}">Abrir</a>
-                </div>`;
+            let html = '<h3>Resultados para "' + input.value + '" (' + resultados.length + ')</h3>';
+            resultados.forEach(function(r) {
+                html += '<div class="result-item"><div class="info"><div class="nome">' + r.nome + '</div><div class="corredor-tag">Corredor ' + r.corredor + '</div><div class="qtd">' + r.quantidade + ' palete' + (r.quantidade > 1 ? 's' : '') + '</div></div><a href="corredor.html?id=' + r.corredor + '">Abrir</a></div>';
             });
             resultsBox.innerHTML = html;
         }
@@ -92,11 +90,11 @@ function setupSearch() {
     }
 
     btn.addEventListener('click', executarBusca);
-    input.addEventListener('keypress', (e) => {
+    input.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') executarBusca();
     });
 
-    input.addEventListener('input', () => {
+    input.addEventListener('input', function() {
         if (input.value.trim() === '') {
             resultsBox.classList.add('hidden');
             corredoresSection.classList.remove('hidden');
@@ -117,8 +115,8 @@ function initCorredorPage() {
     }
 
     corredorAtual = id;
-    document.getElementById('tituloCorredor').textContent = `Corredor ${id}`;
-    document.title = `Corredor ${id} - Falange`;
+    document.getElementById('tituloCorredor').textContent = 'Corredor ' + id;
+    document.title = 'Corredor ' + id + ' - Falange';
 
     renderLista();
     setupFormulario();
@@ -139,18 +137,8 @@ function renderLista() {
     msgVazio.classList.add('hidden');
 
     let html = '';
-    lista.forEach(item => {
-        html += `
-        <div class="item-card">
-            <div class="info">
-                <div class="nome">${item.nome}</div>
-                <div class="qtd">\( {item.quantidade} palete \){item.quantidade > 1 ? 's' : ''}</div>
-            </div>
-            <div class="item-actions">
-                <button class="btn-edit" onclick="editarItem('${item.id}')">✍🏻</button>
-                <button class="btn-delete" onclick="removerItem('${item.id}')">🗑️</button>
-            </div>
-        </div>`;
+    lista.forEach(function(item) {
+        html += '<div class="item-card"><div class="info"><div class="nome">' + item.nome + '</div><div class="qtd">' + item.quantidade + ' palete' + (item.quantidade > 1 ? 's' : '') + '</div></div><div class="item-actions"><button class="btn-edit" onclick="editarItem(\'' + item.id + '\')">✍🏻</button><button class="btn-delete" onclick="removerItem(\'' + item.id + '\')">🗑️</button></div></div>';
     });
 
     container.innerHTML = html;
@@ -165,7 +153,7 @@ function setupFormulario() {
     const inputQtd = document.getElementById('inputQtd');
     const formTitle = document.getElementById('formTitle');
 
-    btnAdicionar.addEventListener('click', () => {
+    btnAdicionar.addEventListener('click', function() {
         editandoId = null;
         formTitle.textContent = 'Nova mercadoria';
         inputNome.value = '';
@@ -174,12 +162,12 @@ function setupFormulario() {
         inputNome.focus();
     });
 
-    btnCancelar.addEventListener('click', () => {
+    btnCancelar.addEventListener('click', function() {
         formBox.classList.add('hidden');
         editandoId = null;
     });
 
-    btnSalvar.addEventListener('click', () => {
+    btnSalvar.addEventListener('click', function() {
         const nome = inputNome.value.trim();
         const qtd = parseInt(inputQtd.value, 10) || 1;
 
@@ -193,7 +181,7 @@ function setupFormulario() {
         if (!dados[corredorAtual]) dados[corredorAtual] = [];
 
         if (editandoId) {
-            const item = dados[corredorAtual].find(i => i.id === editandoId);
+            const item = dados[corredorAtual].find(function(i) { return i.id === editandoId; });
             if (item) {
                 item.nome = nome;
                 item.quantidade = qtd;
@@ -216,7 +204,7 @@ function setupFormulario() {
 function editarItem(id) {
     const dados = getDados();
     const lista = dados[corredorAtual] || [];
-    const item = lista.find(i => i.id === id);
+    const item = lista.find(function(i) { return i.id === id; });
     if (!item) return;
 
     editandoId = id;
@@ -233,7 +221,7 @@ function removerItem(id) {
     const dados = getDados();
     if (!dados[corredorAtual]) return;
 
-    dados[corredorAtual] = dados[corredorAtual].filter(i => i.id !== id);
+    dados[corredorAtual] = dados[corredorAtual].filter(function(i) { return i.id !== id; });
     if (dados[corredorAtual].length === 0) {
         delete dados[corredorAtual];
     }
