@@ -26,15 +26,7 @@ function renderCorredores() {
             <h3>Corredores ${inicio} a ${fim}</h3>
             <div class="botoes-corredor">`;
 
-        for (let i = inicio; i <= fim; i++) {
-            const temItens = dados[i] && dados[i].length > 0;
-            const classe = temItens ? 'has-items' : '';
-            html += `<a href="corredor.html?id=\( {i}" class=" \){classe}">${i}</a>`;
-        }
-
-        html += `</div></div>`;
-    }
-
+        for (let i =
     container.innerHTML = html;
 }
 
